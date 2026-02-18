@@ -37,6 +37,7 @@ Usually, farmers go to the closest market, but sometimes a market a bit further 
 ## 🌍 Deployment
 - **Frontend** is hosted on **Vercel**.
 - **Backend** is hosted on **Render**.
+- https://code4-crops-8yvc-1cgee4dpq-mithra-ss-projects.vercel.app/
 
 ---
 *Created by the Code4Crops Hackathon Team! Hope this helps our farmers grow more profit!* 🚜📈
