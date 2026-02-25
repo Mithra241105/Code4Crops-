@@ -1,0 +1,1 @@
+{\n  "version": 2,\n  "projects": {\n    "frontend": {\n      "root": "frontend/",\n      "buildCommand": "npm install && npm run build",\n      "outputDirectory": "frontend/dist"\n    },\n    "backend": {\n      "root": "backend/",\n      "installCommand": "npm install",\n      "buildCommand": "npm run build",\n      "outputDirectory": "backend/dist"\n    }\n  }\n}
