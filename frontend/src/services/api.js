@@ -1,35 +1,27 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
-const api = axios.create({
-    baseURL: API_URL,
-    headers: {
-        'Content-Type': 'application/json',
-    },
+const api = axios.create({ baseURL: API_URL, timeout: 30000 });
+
+// Attach JWT token to every request
+api.interceptors.request.use((config) => {
+    const token = localStorage.getItem('kr_token');
+    if (token) config.headers.Authorization = `Bearer ${token}`;
+    return config;
 });
 
-export const getMandis = async () => {
-    try {
-        const response = await api.get('/mandis');
-        return response.data;
-    } catch (error) {
-        console.error('Error fetching mandis:', error);
-        throw error;
+// Handle 401 → redirect to login
+api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        if (error.response?.status === 401) {
+            localStorage.removeItem('kr_token');
+            localStorage.removeItem('kr_user');
+            window.location.href = '/auth/login';
+        }
+        return Promise.reject(error);
     }
-};
-
-export const optimizeRoute = async (quantity, vehicleType) => {
-    try {
-        const response = await api.post('/optimize', {
-            quantity,
-            vehicleType,
-        });
-        return response.data;
-    } catch (error) {
-        console.error('Error optimizing route:', error);
-        throw error;
-    }
-};
+);
 
 export default api;

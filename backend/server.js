@@ -1,81 +1,69 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const cors = require("cors");
-require("dotenv").config();
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+const rateLimit = require('express-rate-limit');
+require('dotenv').config();
 
 const app = express();
-app.use(cors());
-app.use(express.json());
 
-mongoose.connect(process.env.MONGO_URI)
-    .then(() => console.log("MongoDB Connected"))
-    .catch(err => console.log(err));
+// Middleware
+app.use(cors({
+  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  credentials: true
+}));
+app.use(express.json({ limit: '10mb' }));
 
-const mandiSchema = new mongoose.Schema({
-    name: String,
-    distance: Number,
-    price: Number,
-    latitude: Number,
-    longitude: Number
+// Rate limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: { error: 'Too many requests, please try again later.' }
+});
+app.use('/api/', limiter);
+
+// Auth limiter (stricter)
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20,
+  message: { error: 'Too many auth attempts, please try again later.' }
 });
 
-const Mandi = mongoose.model("Mandi", mandiSchema);
+// MongoDB Connection — auto-seed after connect
+mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/krishiroute')
+  .then(async () => {
+    console.log('✅ MongoDB Connected');
+    // Run idempotent seed (no-op if data already exists)
+    const seed = require('./seed');
+    await seed();
+  })
+  .catch(err => {
+    console.error('❌ MongoDB connection error:', err.message);
+    process.exit(1);
+  });
 
-app.get("/mandis", async (req, res) => {
-    const mandis = await Mandi.find();
-    res.json(mandis);
+// Routes
+app.use('/api/auth', authLimiter, require('./routes/auth'));
+app.use('/api/farmer', require('./routes/farmer'));
+app.use('/api/mandi', require('./routes/mandi'));
+app.use('/api/chat', require('./routes/chat'));
+
+// Health check
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString(), service: 'Krishi-Route API' });
+});
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({ error: 'Route not found' });
+});
+
+// Global error handler
+app.use((err, req, res, next) => {
+  console.error('Server error:', err);
+  res.status(500).json({ error: 'Internal server error' });
 });
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+  console.log(`🚀 Krishi-Route API running on port ${PORT}`);
 });
-
-app.post("/optimize", async (req, res) => {
-    try {
-        const { quantity, vehicleType } = req.body;
-
-        if (!quantity || !vehicleType) {
-            return res.status(400).json({ error: "Quantity and vehicleType required" });
-        }
-
-        // Vehicle rates per km
-        const vehicleRates = {
-            bike: 4,
-            auto: 8,
-            miniTruck: 18,
-            tractor: 14
-        };
-
-        const vehicleRate = vehicleRates[vehicleType];
-
-        const mandis = await Mandi.find();
-
-        const results = mandis.map(mandi => {
-            const revenue = mandi.price * quantity;
-            const transportCost = mandi.distance * vehicleRate;
-            const handlingCost = quantity * 1.5; // flat ₹1.5 per kg
-            const netProfit = revenue - transportCost - handlingCost;
-
-            return {
-                name: mandi.name,
-                distance: mandi.distance,
-                price: mandi.price,
-                revenue,
-                transportCost,
-                handlingCost,
-                netProfit
-            };
-        });
-
-        // Sort by highest profit
-        results.sort((a, b) => b.netProfit - a.netProfit);
-
-        res.json(results);
-
-    } catch (err) {
-        console.log(err);
-        res.status(500).json({ error: "Server error" });
-    }
-});
-
