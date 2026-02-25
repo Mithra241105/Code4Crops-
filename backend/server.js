@@ -64,6 +64,4 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`🚀 Krishi-Route API running on port ${PORT}`);
-});
+module.exports = app;
