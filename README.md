@@ -114,17 +114,26 @@ Unlike traditional apps that reset data on every restart, **Krishi-Route** featu
 -   Node.js (v18+)
 -   MongoDB (Running locally or on Atlas)
 
-### 2. Quick Start (Windows)
-Simply run the included batch script:
+### 🚀 Unique Automated Launch (Recommended)
+Krishi-Route features a custom automated setup system that handles everything for you. This is the **fastest and most unique way** to get the project running.
+
+**For Linux/Mac/Git Bash:**
+```bash
+chmod +x start.bash
+./start.bash
+```
+
+**For Windows (Command Prompt):**
 ```powershell
 .\start.bat
 ```
-This will automatically:
--   Install dependencies.
--   Perform the **Permanent Seeding**.
--   Launch the Backend and Frontend servers.
 
-### 3. Manual Start
+**What this does automatically:**
+1.  **Installs** all dependencies for both Backend and Frontend.
+2.  **Initializes** the Permanent Seed Data.
+3.  **Launches** both servers in parallel in a single terminal window.
+
+### 4. Manual Start (If preferred)
 **Backend:**
 ```bash
 cd backend
