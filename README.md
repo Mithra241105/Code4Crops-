@@ -13,6 +13,29 @@ In many agricultural sectors, farmers often lose significant profit due to opaqu
 
 ---
 
+## 🚀 Access & Test Credentials
+
+You can explore the platform without signing up by using the following default test accounts. All accounts use the same password.
+
+**Password for all:** `123456`
+
+### 👨‍🌾 Farmer Accounts
+Use these to see the "Optimize” dashboard and find matching Mandis.
+-   `farmer1@krishiroute.com` to `farmer10@krishiroute.com`
+
+### 🏪 Mandi Operator Accounts (By Region)
+Use these to manage crop prices and view analytics for specific states.
+-   **Tamil Nadu**: `mandi_tn1@krishiroute.com` to `mandi_tn5@krishiroute.com`
+-   **Kerala**: `mandi_kl1@krishiroute.com` to `mandi_kl5@krishiroute.com`
+-   **Andhra Pradesh**: `mandi_ap1@krishiroute.com` to `mandi_ap5@krishiroute.com`
+-   **Karnataka**: `mandi_ka1@krishiroute.com` to `mandi_ka5@krishiroute.com`
+-   **Maharashtra**: `mandi_mh1@krishiroute.com` to `mandi_mh5@krishiroute.com`
+-   **Punjab**: `mandi_pb1@krishiroute.com` to `mandi_pb5@krishiroute.com`
+
+*(Format: `mandi_[state_code][1-5]@krishiroute.com` — Works for all 28 states!)*
+
+---
+
 ## 🎨 Professional UI & UX Design
 The application is built with a **Premium Focus**, ensuring a "wow" factor for every user.
 
