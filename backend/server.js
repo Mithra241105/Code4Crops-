@@ -10,11 +10,26 @@ const app = express();
 app.use(cors({
   origin: [
     "https://code4-crops.vercel.app",
-    "http://localhost:5173"
-  ],
+    "https://code4-crops-l4li6.vercel.app",
+    "http://localhost:5173",
+    process.env.CLIENT_URL
+  ].filter(Boolean),
   credentials: true
 }));
 app.use(express.json({ limit: '10mb' }));
+
+// Root landing page
+app.get('/', (req, res) => {
+  res.send(`
+    <body style="font-family: sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; background: #f0fdf4;">
+      <div style="text-align: center; padding: 2rem; background: white; border-radius: 1rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);">
+        <h1 style="color: #16a34a; margin-top: 0;">🌾 Krishi-Route API</h1>
+        <p style="color: #4b5563;">The brain of your agriculture platform is active!</p>
+        <p style="font-size: 0.8rem; color: #9ca3af;">Status: <span style="color: #22c55e;">● Live</span></p>
+      </div>
+    </body>
+  `);
+});
 
 // Rate limiting
 const limiter = rateLimit({
