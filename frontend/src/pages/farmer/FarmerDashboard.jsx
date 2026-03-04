@@ -9,7 +9,8 @@ import Navbar from '../../components/Layout/Navbar';
 import OptimizePage from './OptimizePage';
 import HistoryPage from './HistoryPage';
 import FarmerProfilePage from './FarmerProfilePage';
-import Chatbot from '../../components/Chatbot/Chatbot';
+import TravelPlansPage from './TravelPlansPage';
+import { LocalShipping } from '@mui/icons-material';
 
 const FarmerDashboard = () => {
     const { t } = useTranslation();
@@ -19,6 +20,7 @@ const FarmerDashboard = () => {
 
     const tabs = [
         { path: '/farmer', label: t('nav.optimize'), icon: <TrendingUp /> },
+        { path: '/farmer/trips', label: "Trips", icon: <LocalShipping /> },
         { path: '/farmer/history', label: t('nav.history'), icon: <History /> },
         { path: '/farmer/profile', label: t('nav.profile'), icon: <Person /> },
     ];
@@ -36,13 +38,14 @@ const FarmerDashboard = () => {
                 <Box>
                     <Routes>
                         <Route index element={<OptimizePage />} />
+                        <Route path="trips" element={<TravelPlansPage />} />
                         <Route path="history" element={<HistoryPage />} />
                         <Route path="profile" element={<FarmerProfilePage />} />
                     </Routes>
                 </Box>
 
                 {/* Bottom navigation for mobile */}
-                <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0, display: { sm: 'none' }, zIndex: 1100, borderTop: '1px solid rgba(0,0,0,0.1)' }} elevation={3}>
+                <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0, display: { sm: 'none' }, zIndex: 1100, borderTop: '1px solid', borderColor: 'divider' }} elevation={3}>
                     <BottomNavigation value={currentTab < 0 ? 0 : currentTab}
                         onChange={(_, v) => navigate(tabs[v].path)}
                         sx={{ '& .Mui-selected': { color: 'primary.main' }, height: 60 }}>
@@ -52,8 +55,8 @@ const FarmerDashboard = () => {
                     </BottomNavigation>
                 </Paper>
 
-                {/* AI Chatbot floating */}
-                <Chatbot />
+
+                {/* Bottom navigation for mobile */}
             </Box>
         </UnitProvider>
     );

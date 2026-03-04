@@ -26,12 +26,12 @@ const SignupPage = () => {
             await signup(form.name, form.email, form.password, form.role);
             navigate('/auth/verify-otp', { state: { email: form.email, role: form.role } });
         } catch (err) {
-            setError(err.response?.data?.error || 'Signup failed');
+            setError(err.response?.data?.error || t('auth.signupFailed'));
         } finally { setLoading(false); }
     };
 
     return (
-        <AuthLayout title={t('auth.createAccount')} subtitle={`Join Krishi-Route as a ${form.role}`}>
+        <AuthLayout title={t('auth.createAccount')} subtitle={t('auth.signupSubtitle', { role: t(`auth.${form.role}`) })}>
             {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
             <Box component="form" onSubmit={handleSubmit} display="flex" flexDirection="column" gap={2.5}>
                 {/* Role selection */}
@@ -56,7 +56,7 @@ const SignupPage = () => {
                 <TextField label={t('auth.email')} name="email" type="email" value={form.email} onChange={handleChange} required fullWidth />
                 <TextField label={t('auth.password')} name="password" type={showPass ? 'text' : 'password'}
                     value={form.password} onChange={handleChange} required fullWidth
-                    helperText="Minimum 8 characters"
+                    helperText={t('auth.passwordTooShort')}
                     InputProps={{
                         endAdornment: (
                             <InputAdornment position="end">

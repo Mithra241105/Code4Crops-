@@ -34,7 +34,6 @@ To explore the application without signing up, you can use the following default
    `Net Profit = (Crop Price × Quantity) - Transport Cost - Handling Cost`  
    The platform recommends the best mandi based on real-time prices, distance, and historical demand.
 4. **Mandi Portal:** Mandi operators manage their listed crop prices, update their availability (`Open`/`Closed`), and track local demand analytics.
-5. **AI Assistance:** A built-in AI chatbot (powered by Grok/Ollama) assists users with farming queries, platform navigation, and multilingual support (English, Hindi, Tamil).
 
 ---
 
@@ -47,7 +46,6 @@ To explore the application without signing up, you can use the following default
 | **Interactive Maps** | Integrated Leaflet Map (with Google Maps fallback) for route visualization and GPS tracking. |
 | **Mandi Price Management (CMS)** | Mandi Admins can dynamically adjust crop prices and toggle active status. |
 | **Multilingual Support** | i18n support localized in English, हिन्दी (Hindi), and தமிழ் (Tamil). |
-| **AI Chat Assistant** | Floating widget utilizing context-aware AI for instant help and agricultural queries. |
 | **Secure Authentication** | JWT-based auth with bcrypt password hashing and SMTP-powered OTP verification. |
 | **Analytics & History** | Visual bar charts (using Recharts) for profit tracking and historical transaction data. |
 
@@ -83,7 +81,7 @@ cp .env.example .env
 npm install
 ```
 Edit the `.env` file and provide your `MONGO_URI`. 
-*(Optional: Add `SMTP_*` for email functionality and `GROK_API_KEY` for AI capability).*
+*(Optional: Add `SMTP_*` for email functionality).*
 
 **Start Server & Seed Data:**
 ```bash

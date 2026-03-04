@@ -4,6 +4,7 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Box, Typography, Button, Chip } from '@mui/material';
 import { DirectionsCar } from '@mui/icons-material';
+import { useTranslation } from 'react-i18next';
 
 // Fix Leaflet icon issue
 delete L.Icon.Default.prototype._getIconUrl;
@@ -41,6 +42,7 @@ const FitBounds = ({ farmerLat, farmerLng, mandis }) => {
 };
 
 const MapView = ({ farmerLat, farmerLng, mandis = [], bestMandi }) => {
+    const { t } = useTranslation();
     if (!farmerLat || !farmerLng) return null;
 
     const validMandis = mandis.filter(m => m.location?.lat && m.location?.lng);
@@ -57,7 +59,7 @@ const MapView = ({ farmerLat, farmerLng, mandis = [], bestMandi }) => {
 
                     {/* Farmer marker */}
                     <Marker position={[farmerLat, farmerLng]} icon={farmerIcon}>
-                        <Popup><strong>Your Location</strong><br />{farmerLat.toFixed(4)}, {farmerLng.toFixed(4)}</Popup>
+                        <Popup><strong>{t('farmer.location')}</strong><br />{farmerLat.toFixed(4)}, {farmerLng.toFixed(4)}</Popup>
                     </Marker>
 
                     {/* Mandi markers */}
@@ -70,13 +72,13 @@ const MapView = ({ farmerLat, farmerLng, mandis = [], bestMandi }) => {
                             <Popup>
                                 <Box>
                                     <Typography variant="body2" fontWeight={700}>{mandi.mandiName}</Typography>
-                                    <Typography variant="caption">Rank #{mandi.rank} • {mandi.distance} km</Typography><br />
-                                    <Typography variant="caption" color="success.main">Profit: ₹{mandi.netProfit?.toLocaleString('en-IN')}</Typography><br />
+                                    <Typography variant="caption">{t('farmer.rank')} #{mandi.rank} • {mandi.distance} km</Typography><br />
+                                    <Typography variant="caption" color="success.main">{t('farmer.profit')}: ₹{mandi.netProfit?.toLocaleString('en-IN')}</Typography><br />
                                     <Button
                                         size="small" variant="contained" sx={{ mt: 1, fontSize: '0.7rem', py: 0.3 }}
                                         onClick={() => window.open(`https://www.google.com/maps/dir/?api=1&destination=${mandi.location.lat},${mandi.location.lng}`, '_blank')}
                                     >
-                                        Navigate
+                                        {t('common.view')}
                                     </Button>
                                 </Box>
                             </Popup>
@@ -96,7 +98,7 @@ const MapView = ({ farmerLat, farmerLng, mandis = [], bestMandi }) => {
             {bestMandi && (
                 <Box sx={{ p: 2, bgcolor: '#E8F5E9', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 1 }}>
                     <Box>
-                        <Typography variant="body2" color="text.secondary">Best Route</Typography>
+                        <Typography variant="body2" color="text.secondary">{t('farmer.bestRoute')}</Typography>
                         <Typography variant="body1" fontWeight={700}>{bestMandi.mandiName} • {bestMandi.distance} km</Typography>
                     </Box>
                     <Button
@@ -104,7 +106,7 @@ const MapView = ({ farmerLat, farmerLng, mandis = [], bestMandi }) => {
                         startIcon={<DirectionsCar />}
                         onClick={() => window.open(`https://www.google.com/maps/dir/?api=1&destination=${bestMandi.location.lat},${bestMandi.location.lng}`, '_blank')}
                     >
-                        Navigate in Google Maps
+                        {t('farmer.navigate')}
                     </Button>
                 </Box>
             )}

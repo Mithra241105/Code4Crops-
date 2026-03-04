@@ -54,12 +54,16 @@ const calculateTransportCost = (distanceKm, vehicleType, fuelPrice) => {
     const efficiency = VEHICLE_EFFICIENCY[vehicleType] || 12;
     const baseRate = VEHICLE_BASE_RATE[vehicleType] || 15;
     // Fuel cost component
-    const fuelCost = (distanceKm / efficiency) * fuelPrice;
+    const fuelCost = Math.round((distanceKm / efficiency) * fuelPrice);
     // Base cost (driver + wear)
-    const baseCost = distanceKm * baseRate;
-    return Math.round(fuelCost + baseCost);
+    const baseCost = Math.round(distanceKm * baseRate);
+    return {
+        total: fuelCost + baseCost,
+        fuel: fuelCost,
+        base: baseCost
+    };
 };
 
 const getVehicleCapacity = (vehicleType) => VEHICLE_CAPACITY[vehicleType] || 30;
 
-module.exports = { getFuelPrice, calculateTransportCost, getVehicleCapacity, VEHICLE_CAPACITY, VEHICLE_BASE_RATE };
+module.exports = { getFuelPrice, calculateTransportCost, getVehicleCapacity, VEHICLE_CAPACITY, VEHICLE_BASE_RATE, VEHICLE_EFFICIENCY };

@@ -104,7 +104,7 @@ const TransportPool = ({ bestMandi, cropType, vehicleType, quantity }) => {
                         </Box>
 
                         <Typography variant="caption" fontWeight={700} color="text.secondary">
-                            {t('pool.headingTo').toUpperCase()}
+                            {t('pool.headingToLabel')}
                         </Typography>
                         <Typography variant="body1" fontWeight={700} sx={{ mb: 2 }}>
                             {bestMandi.mandiName}

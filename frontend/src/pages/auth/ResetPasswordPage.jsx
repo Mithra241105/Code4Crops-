@@ -23,14 +23,14 @@ const ResetPasswordPage = () => {
         setLoading(true); setError('');
         try {
             await resetPassword(form.email, form.otp, form.newPassword);
-            navigate('/auth/login', { state: { message: 'Password reset successfully. Please login.' } });
+            navigate('/auth/login', { state: { message: t('auth.resetPasswordSuccess') } });
         } catch (err) {
-            setError(err.response?.data?.error || 'Reset failed');
+            setError(err.response?.data?.error || t('auth.resetFailed'));
         } finally { setLoading(false); }
     };
 
     return (
-        <AuthLayout title={t('auth.resetPassword')} subtitle="Enter the OTP and your new password">
+        <AuthLayout title={t('auth.resetPassword')} subtitle={t('auth.resetPasswordSubtitle')}>
             {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
             <Box component="form" onSubmit={handleSubmit} display="flex" flexDirection="column" gap={2.5}>
                 <TextField label={t('auth.email')} name="email" type="email" value={form.email} onChange={handleChange} required fullWidth />

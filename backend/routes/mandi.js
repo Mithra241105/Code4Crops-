@@ -3,6 +3,7 @@ const router = express.Router();
 const { requireAuth, requireRole } = require('../middleware/auth');
 const Mandi = require('../models/Mandi');
 const User = require('../models/User');
+const PriceRecord = require('../models/PriceRecord');
 
 // Public: list all active mandis
 router.get('/list', async (req, res) => {
@@ -69,7 +70,19 @@ router.post('/crops', async (req, res) => {
             mandi.supportedCrops.push(name);
         }
 
+        // Initialize price history
+        const history = mandi.priceHistory.get(name) || [];
+        mandi.priceHistory.set(name, [Number(price), ...history].slice(0, 3));
+
         await mandi.save();
+
+        // Log historical price record
+        await PriceRecord.create({
+            mandiId: mandi._id,
+            crop: name,
+            price: Number(price)
+        });
+
         res.status(201).json({ message: 'Crop added', crop: { id: name, name, price, available: true } });
     } catch (err) {
         res.status(500).json({ error: 'Server error' });
@@ -85,7 +98,21 @@ router.put('/crops/:id', async (req, res) => {
         const mandi = await Mandi.findOne({ adminUser: req.user._id });
         if (!mandi) return res.status(404).json({ error: 'Mandi not found' });
 
-        if (price !== undefined) mandi.cropPrices.set(cropId, Number(price));
+        if (price !== undefined) {
+            const numPrice = Number(price);
+            mandi.cropPrices.set(cropId, numPrice);
+            // Update history
+            const history = mandi.priceHistory.get(cropId) || [];
+            if (history[0] !== numPrice) {
+                mandi.priceHistory.set(cropId, [numPrice, ...history].slice(0, 3));
+                // Log historical price record
+                await PriceRecord.create({
+                    mandiId: mandi._id,
+                    crop: cropId,
+                    price: numPrice
+                });
+            }
+        }
 
         // If 'available' is false, we might want to remove it from supportedCrops 
         // but keep it in the map, OR keep it in both but mark as unavailable (not in schema yet)
@@ -210,7 +237,20 @@ router.put('/admin/prices', async (req, res) => {
         mandi.cropPrices = new Map();
         if (cropPrices) {
             for (const [crop, price] of Object.entries(cropPrices)) {
-                mandi.cropPrices.set(crop, Number(price));
+                const numPrice = Number(price);
+                mandi.cropPrices.set(crop, numPrice);
+
+                // Update history if price changed
+                const history = mandi.priceHistory.get(crop) || [];
+                if (history[0] !== numPrice) {
+                    mandi.priceHistory.set(crop, [numPrice, ...history].slice(0, 3));
+                    // Log historical price record
+                    await PriceRecord.create({
+                        mandiId: mandi._id,
+                        crop,
+                        price: numPrice
+                    });
+                }
             }
         }
         if (supportedCrops !== undefined) mandi.supportedCrops = supportedCrops;
@@ -260,6 +300,26 @@ router.put('/admin/availability', async (req, res) => {
     }
 });
 
+// PATCH /api/mandi/status — simple toggle for isOpen
+router.patch('/status', async (req, res) => {
+    try {
+        const { isOpen } = req.body;
+        if (isOpen === undefined) return res.status(400).json({ error: 'isOpen field required' });
+
+        const mandi = await Mandi.findOneAndUpdate(
+            { adminUser: req.user._id },
+            { $set: { isOpen: !!isOpen } },
+            { new: true }
+        );
+        if (!mandi) return res.status(404).json({ error: 'Mandi not found' });
+
+        res.json({ mandi, message: 'Status updated successfully' });
+    } catch (err) {
+        console.error('/api/mandi/status PATCH error:', err);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
 // PUT /api/mandi/admin/location
 router.put('/admin/location', async (req, res) => {
     try {
@@ -292,6 +352,80 @@ router.get('/admin/analytics', async (req, res) => {
         const pricesObj = {};
         mandi.cropPrices.forEach((val, key) => { pricesObj[key] = val; });
 
+        // --- Hot Crops: top 5 crops by price within this mandi ---
+        const cropPriceEntries = Object.entries(pricesObj).sort((a, b) => b[1] - a[1]);
+        const hotCrops = cropPriceEntries.slice(0, 5).map(([crop, price]) => ({ crop, price }));
+
+        // --- Price Trend from priceHistory (last 3 snapshots) ---
+        const priceTrends = {};
+        mandi.priceHistory.forEach((history, crop) => {
+            if (history && history.length >= 2) {
+                const change = history[0] - history[1]; // current - previous
+                const changePct = history[1] > 0 ? ((change / history[1]) * 100).toFixed(1) : 0;
+                priceTrends[crop] = {
+                    current: history[0],
+                    previous: history[1],
+                    change,
+                    changePct: parseFloat(changePct),
+                    direction: change > 0 ? 'up' : change < 0 ? 'down' : 'stable',
+                };
+            }
+        });
+
+        // --- Market Competition: compare with nearby mandis in same state ---
+        const stateMandis = await Mandi.find({
+            'location.state': mandi.location.state,
+            _id: { $ne: mandi._id },
+            isOpen: true
+        }).select('name cropPrices demandScore avgDailyVolume supportedCrops');
+
+        // Build price suggestions: if this mandi's price is < avg state price for a crop, suggest raising
+        const priceSuggestions = [];
+        const cropCount = {};
+        const cropTotal = {};
+        stateMandis.forEach(sm => {
+            sm.cropPrices.forEach((price, crop) => {
+                if (!cropCount[crop]) { cropCount[crop] = 0; cropTotal[crop] = 0; }
+                cropCount[crop]++;
+                cropTotal[crop] += price;
+            });
+        });
+
+        Object.keys(pricesObj).forEach(crop => {
+            if (cropCount[crop] && cropCount[crop] > 0) {
+                const stateAvg = Math.round(cropTotal[crop] / cropCount[crop]);
+                const myPrice = pricesObj[crop];
+                const diff = myPrice - stateAvg;
+                const diffPct = stateAvg > 0 ? Math.round((diff / stateAvg) * 100) : 0;
+                if (Math.abs(diffPct) >= 1) { // Only suggest if more than 1% off
+                    priceSuggestions.push({
+                        crop,
+                        myPrice,
+                        stateAvg,
+                        diff,
+                        diffPct,
+                        suggestion: diff < 0
+                            ? `Raise by ₹${Math.abs(diff)} to match state average`
+                            : `You're ₹${diff} above state avg - competitive!`,
+                        action: diff < 0 ? 'raise' : 'competitive',
+                    });
+                }
+            }
+        });
+        priceSuggestions.sort((a, b) => Math.abs(b.diffPct) - Math.abs(a.diffPct));
+
+        // --- State rank by demand score ---
+        const allStateRanks = await Mandi.find({ 'location.state': mandi.location.state })
+            .sort({ demandScore: -1 }).select('_id name demandScore');
+        const myRank = allStateRanks.findIndex(m => m._id.toString() === mandi._id.toString()) + 1;
+
+        // --- Total incoming volume estimate (simulate based on demandScore + avgDailyVolume) ---
+        const estimatedVolume = mandi.avgDailyVolume || Math.round(mandi.demandScore * 150);
+        const peakCropVolumes = hotCrops.map(({ crop }) => ({
+            crop,
+            volume: Math.round(estimatedVolume * (0.1 + Math.random() * 0.2)),
+        }));
+
         res.json({
             analytics: {
                 mandiName: mandi.name,
@@ -301,12 +435,22 @@ router.get('/admin/analytics', async (req, res) => {
                 cropPrices: pricesObj,
                 handlingRate: mandi.handlingRate,
                 location: mandi.location,
+                avgDailyVolume: estimatedVolume,
+                hotCrops,
+                priceTrends,
+                priceSuggestions: priceSuggestions.slice(0, 6),
+                stateRank: myRank,
+                totalMandisInState: allStateRanks.length,
+                peakCropVolumes,
+                stateMandisCount: stateMandis.length,
             }
         });
     } catch (err) {
+        console.error('/admin/analytics error:', err);
         res.status(500).json({ error: 'Server error' });
     }
 });
+
 
 
 module.exports = router;

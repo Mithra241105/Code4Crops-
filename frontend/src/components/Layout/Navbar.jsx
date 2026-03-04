@@ -6,16 +6,19 @@ import {
 } from '@mui/material';
 import {
     Logout, Person, Lock, Home, GridView, Translate,
-    ChevronRight, Close
+    ChevronRight, Close, LocalShipping
 } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { useThemeMode } from '../../contexts/ThemeContext';
 import LanguageSwitcher from '../ui/LanguageSwitcher';
+import { LightMode, DarkMode } from '@mui/icons-material';
 
 const Navbar = ({ title, role }) => {
     const { t } = useTranslation();
     const { user, logout } = useAuth();
+    const { mode, toggleTheme } = useThemeMode();
     const navigate = useNavigate();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -38,15 +41,19 @@ const Navbar = ({ title, role }) => {
     };
 
     const menuItems = [
-        { label: t('Dashboard'), icon: <GridView fontSize="small" />, action: () => handleNavigate(role === 'mandi' ? '/mandi' : '/') },
+        { label: t('nav.dashboard'), icon: <GridView fontSize="small" />, action: () => handleNavigate(role === 'mandi' ? '/mandi' : '/') },
+        ...(role === 'farmer' ? [{ label: t('nav.history'), icon: <LocalShipping fontSize="small" />, action: () => handleNavigate('/farmer/trips') }] : []),
         { label: t('profile.accountInfo'), icon: <Person fontSize="small" />, action: () => handleNavigate(`/${role}/profile`, { tab: 0 }) },
         { label: t('profile.security'), icon: <Lock fontSize="small" />, action: () => handleNavigate(`/${role}/profile`, { tab: 1 }) },
     ];
 
     return (
         <AppBar position="sticky" elevation={0} sx={{
-            background: 'linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%)',
-            borderBottom: '1px solid rgba(255,255,255,0.1)',
+            background: mode === 'dark'
+                ? 'linear-gradient(135deg, #0F2D1F 0%, #134924 50%, #0F2D1F 100%)'
+                : 'linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%)',
+            borderBottom: mode === 'dark' ? '1px solid rgba(34,197,94,0.15)' : '1px solid rgba(255,255,255,0.1)',
+            transition: 'all 0.3s ease',
             zIndex: theme.zIndex.drawer + 1
         }}>
             <Toolbar sx={{ minHeight: { xs: 56, sm: 64 }, gap: 2 }}>
@@ -69,7 +76,10 @@ const Navbar = ({ title, role }) => {
 
                 {/* desktop menu elements */}
                 {!isMobile && (
-                    <Box display="flex" alignItems="center" gap={2}>
+                    <Box display="flex" alignItems="center" gap={1}>
+                        <IconButton onClick={toggleTheme} color="inherit" sx={{ bgcolor: 'rgba(255,255,255,0.1)', '&:hover': { bgcolor: 'rgba(255,255,255,0.2)' } }}>
+                            {mode === 'dark' ? <LightMode fontSize="small" /> : <DarkMode fontSize="small" />}
+                        </IconButton>
                         <LanguageSwitcher />
                     </Box>
                 )}
@@ -160,10 +170,15 @@ const Navbar = ({ title, role }) => {
                                         </ListItem>
                                     ))}
                                     <ListItem disablePadding>
-                                        <Box sx={{ px: 2, py: 1, width: '100%' }}>
-                                            <Typography variant="caption" fontWeight={700} color="text.secondary" sx={{ mb: 1, display: 'block' }}>
-                                                {t('unit.title')} / {t('common.language')}
-                                            </Typography>
+                                        <Box sx={{ px: 2, py: 1, width: '100%', display: 'flex', flexDirection: 'column', gap: 2 }}>
+                                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                                <Typography variant="caption" fontWeight={700} color="text.secondary">
+                                                    {t('common.language')}
+                                                </Typography>
+                                                <IconButton onClick={toggleTheme} sx={{ bgcolor: 'action.hover' }}>
+                                                    {mode === 'dark' ? <LightMode fontSize="small" /> : <DarkMode fontSize="small" />}
+                                                </IconButton>
+                                            </Box>
                                             <LanguageSwitcher />
                                         </Box>
                                     </ListItem>

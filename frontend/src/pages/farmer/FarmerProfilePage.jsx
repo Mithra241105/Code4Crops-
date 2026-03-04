@@ -112,7 +112,7 @@ const FarmerProfilePage = () => {
                 sx={{ mb: 2, fontWeight: 700, borderRadius: 2 }}
                 color="inherit"
             >
-                {t('common.backToDashboard')}
+                {t('nav.backToDashboard')}
             </Button>
             {/* Header */}
             <Box textAlign="center" mb={4}>
@@ -147,20 +147,20 @@ const FarmerProfilePage = () => {
                         <Box display="flex" flexDirection="column" gap={2.5}>
                             <TextField label={t('auth.name')} name="name" value={form.name} onChange={handleChange} fullWidth />
                             <TextField label={t('auth.email')} value={user?.email} fullWidth disabled
-                                helperText="Email cannot be changed" />
-                            <TextField label="Village / Town" name="village" value={form.village} onChange={handleChange} fullWidth />
+                                helperText={t('profile.emailHint')} />
+                            <TextField label={t('profile.address')} name="village" value={form.village} onChange={handleChange} fullWidth />
                             <Box display="grid" gridTemplateColumns="1fr 1fr" gap={2}>
-                                <TextField label="District" name="district" value={form.district} onChange={handleChange} fullWidth />
-                                <TextField select label="State" name="state" value={form.state} onChange={handleChange} fullWidth>
+                                <TextField label={t('profile.district')} name="district" value={form.district} onChange={handleChange} fullWidth />
+                                <TextField select label={t('profile.state')} name="state" value={form.state} onChange={handleChange} fullWidth>
                                     {STATES.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}
                                 </TextField>
                             </Box>
-                            <TextField label="Phone" name="phone" value={form.phone} onChange={handleChange} fullWidth
+                            <TextField label={t('profile.phone')} name="phone" value={form.phone} onChange={handleChange} fullWidth
                                 inputProps={{ maxLength: 10 }} />
                             <Box display="grid" gridTemplateColumns="1fr 1fr" gap={2}>
-                                <TextField label="Farm Size (Acres)" name="farmSize" type="number"
+                                <TextField label={t('profile.farmSize')} name="farmSize" type="number"
                                     value={form.farmSize} onChange={handleChange} fullWidth />
-                                <TextField select label="Preferred Vehicle" name="preferredVehicle"
+                                <TextField select label={t('profile.preferredVehicle')} name="preferredVehicle"
                                     value={form.preferredVehicle} onChange={handleChange} fullWidth>
                                     {VEHICLES.map(v => <MenuItem key={v} value={v}>{t(`vehicles.${v}`)}</MenuItem>)}
                                 </TextField>
@@ -180,8 +180,7 @@ const FarmerProfilePage = () => {
                 <Card elevation={0} sx={{ border: '1px solid rgba(0,0,0,0.08)' }}>
                     <CardContent sx={{ p: 3 }}>
                         <Typography variant="body2" color="text.secondary" mb={3}>
-                            Change your password. You must know your current password to proceed.
-                            If you've forgotten it, use <strong>Forgot Password</strong> from the login page.
+                            {t('profile.changePasswordNote')}
                         </Typography>
                         {pwMsg.text && (
                             <Alert severity={pwMsg.type} sx={{ mb: 2 }} onClose={() => setPwMsg({ type: '', text: '' })}>
@@ -207,7 +206,7 @@ const FarmerProfilePage = () => {
                                 label={t('profile.newPassword')} name="newPassword"
                                 type={showNew ? 'text' : 'password'}
                                 value={pwForm.newPassword} onChange={handlePwChange} fullWidth
-                                helperText="Minimum 6 characters"
+                                helperText={t('profile.minCharacters')}
                                 InputProps={{
                                     endAdornment: (
                                         <InputAdornment position="end">

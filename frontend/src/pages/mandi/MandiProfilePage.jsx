@@ -8,28 +8,14 @@ import { LocationOn, Save, Lock, Store, Visibility, VisibilityOff, ArrowBack } f
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
-import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
+import LocationPickerMap from '../../components/Map/LocationPickerMap';
 import api from '../../services/api';
-
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-    iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png',
-    iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png',
-    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
-});
 
 const STATES = [
     'Andhra Pradesh', 'Bihar', 'Delhi', 'Gujarat', 'Haryana', 'Jharkhand',
     'Karnataka', 'Kerala', 'Madhya Pradesh', 'Maharashtra', 'Odisha',
     'Punjab', 'Rajasthan', 'Tamil Nadu', 'Telangana', 'Uttar Pradesh', 'West Bengal',
 ];
-
-const LocationPicker = ({ position, onPick }) => {
-    useMapEvents({ click(e) { onPick(e.latlng.lat, e.latlng.lng); } });
-    return position ? <Marker position={position} /> : null;
-};
 
 const MandiProfilePage = () => {
     const { t } = useTranslation();
@@ -156,7 +142,7 @@ const MandiProfilePage = () => {
                 sx={{ mb: 2, fontWeight: 700, borderRadius: 2 }}
                 color="inherit"
             >
-                {t('common.backToDashboard')}
+                {t('nav.backToDashboard')}
             </Button>
             {/* Page header */}
             <Box mb={4} display="flex" alignItems="center" gap={2}>
@@ -171,7 +157,7 @@ const MandiProfilePage = () => {
             </Box>
 
             {/* Tabs */}
-            <Box sx={{ borderBottom: '1px solid rgba(0,0,0,0.08)', mb: 3 }}>
+            <Box sx={{ borderBottom: '1px solid', borderColor: 'divider', mb: 3 }}>
                 <Tabs value={tab} onChange={(_, v) => setTab(v)} textColor="primary" indicatorColor="primary">
                     <Tab icon={<Store sx={{ fontSize: 18 }} />} iconPosition="start" label={t('profile.accountInfo')} sx={{ fontWeight: 700, minHeight: 48 }} />
                     <Tab icon={<Lock sx={{ fontSize: 18 }} />} iconPosition="start" label={t('profile.security')} sx={{ fontWeight: 700, minHeight: 48 }} />
@@ -189,7 +175,7 @@ const MandiProfilePage = () => {
                     )}
                     <Box display="grid" gridTemplateColumns={{ xs: '1fr', md: '1fr 1fr' }} gap={3}>
                         {/* Info form */}
-                        <Card elevation={0} sx={{ border: '1px solid rgba(0,0,0,0.08)' }}>
+                        <Card elevation={0} sx={{ border: '1px solid', borderColor: 'divider' }}>
                             <CardContent sx={{ p: 3 }}>
                                 <Typography variant="h6" fontWeight={700} mb={2.5}>
                                     {t('profile.accountInfo')}
@@ -199,52 +185,51 @@ const MandiProfilePage = () => {
                                         onChange={handleChange} required fullWidth />
                                     <TextField label={t('auth.email')} value={user?.email}
                                         fullWidth disabled helperText={t('profile.emailHint')} />
-                                    <TextField label="Address / Street" name="address" value={form.address}
+                                    <TextField label={t('profile.address')} name="address" value={form.address}
                                         onChange={handleChange} fullWidth />
                                     <Box display="grid" gridTemplateColumns="1fr 1fr" gap={2}>
-                                        <TextField label="City" name="city" value={form.city} onChange={handleChange} fullWidth />
-                                        <TextField label="District" name="district" value={form.district} onChange={handleChange} fullWidth />
+                                        <TextField label={t('profile.city')} name="city" value={form.city} onChange={handleChange} fullWidth />
+                                        <TextField label={t('profile.district')} name="district" value={form.district} onChange={handleChange} fullWidth />
                                     </Box>
-                                    <TextField select label="State" name="state" value={form.state} onChange={handleChange} fullWidth>
+                                    <TextField select label={t('profile.state')} name="state" value={form.state} onChange={handleChange} fullWidth>
                                         {STATES.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}
                                     </TextField>
                                     <Box display="grid" gridTemplateColumns="1fr 1fr" gap={2}>
-                                        <TextField label="Phone" name="phone" value={form.phone}
+                                        <TextField label={t('profile.phone')} name="phone" value={form.phone}
                                             onChange={handleChange} fullWidth inputProps={{ maxLength: 10 }} />
                                         <TextField label={t('mandi.handlingRate')} name="handlingRate"
                                             type="number" value={form.handlingRate} onChange={handleChange}
                                             fullWidth helperText="₹ per quintal"
                                             InputProps={{ startAdornment: <InputAdornment position="start">₹</InputAdornment> }} />
                                     </Box>
-                                    <TextField label="License Number" name="licenseNumber"
+                                    <TextField label={t('mandi.licenseNumber')} name="licenseNumber"
                                         value={form.licenseNumber} onChange={handleChange} fullWidth />
-                                    <TextField label="Operating Hours" name="operatingHours"
+                                    <TextField label={t('mandi.operatingHours')} name="operatingHours"
                                         value={form.operatingHours} onChange={handleChange}
-                                        fullWidth placeholder="e.g. 6:00 AM – 2:00 PM"
-                                        helperText="When is your mandi open for trade?" />
+                                        fullWidth placeholder={t('mandi.operatingHoursPlaceholder')}
+                                        helperText={t('mandi.operatingHoursHelper')} />
                                 </Box>
                             </CardContent>
                         </Card>
 
                         {/* Map picker */}
-                        <Card elevation={0} sx={{ border: '1px solid rgba(0,0,0,0.08)' }}>
+                        <Card elevation={0} sx={{ border: '1px solid', borderColor: 'divider' }}>
                             <CardContent sx={{ p: 0, height: '100%', minHeight: 440 }}>
-                                <Box sx={{ bgcolor: location ? '#E8F5E9' : '#FFF8E1', px: 2, py: 1.5 }}>
+                                <Box sx={{
+                                    bgcolor: location ? 'success.main' : 'warning.main',
+                                    opacity: 0.1, px: 2, py: 1.5
+                                }}>
                                     <Typography variant="body2" fontWeight={600} color={location ? 'success.main' : 'text.secondary'}>
                                         {location
-                                            ? `📍 Location set: ${location[0].toFixed(4)}, ${location[1].toFixed(4)} (click to update)`
-                                            : `🗺️ ${t('mandi.pinLocation')} (optional)`}
+                                            ? t('mandi.locationSetWithCoords', { lat: location[0].toFixed(4), lng: location[1].toFixed(4) })
+                                            : `🗺️ ${t('mandi.pinLocation')} ${t('common.optional')}`}
                                     </Typography>
                                 </Box>
                                 <Box sx={{ height: 400 }}>
-                                    <MapContainer
-                                        center={location || [20.5937, 78.9629]}
-                                        zoom={location ? 12 : 5}
-                                        style={{ height: '100%', width: '100%' }}
-                                    >
-                                        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                                        <LocationPicker position={location} onPick={(lat, lng) => setLocation([lat, lng])} />
-                                    </MapContainer>
+                                    <LocationPickerMap
+                                        position={location}
+                                        onPick={(lat, lng) => setLocation([lat, lng])}
+                                    />
                                 </Box>
                             </CardContent>
                         </Card>
@@ -262,11 +247,10 @@ const MandiProfilePage = () => {
 
             {/* ── Tab 1: Security ───────────────────────────────────────── */}
             {tab === 1 && (
-                <Card elevation={0} sx={{ border: '1px solid rgba(0,0,0,0.08)', maxWidth: 480 }}>
+                <Card elevation={0} sx={{ border: '1px solid', borderColor: 'divider', maxWidth: 480 }}>
                     <CardContent sx={{ p: 3 }}>
                         <Typography variant="body2" color="text.secondary" mb={3}>
-                            Change your password. You must know your current password to proceed.
-                            If you've forgotten it, use <strong>Forgot Password</strong> from the login page.
+                            {t('profile.changePasswordNote')}
                         </Typography>
                         {pwMsg.text && (
                             <Alert severity={pwMsg.type} sx={{ mb: 2 }}
@@ -293,7 +277,7 @@ const MandiProfilePage = () => {
                                 label={t('profile.newPassword')} name="newPassword"
                                 type={showNew ? 'text' : 'password'}
                                 value={pwForm.newPassword} onChange={handlePwChange}
-                                fullWidth helperText="Minimum 6 characters"
+                                fullWidth helperText={t('auth.passwordTooShort')}
                                 InputProps={{
                                     endAdornment: (
                                         <InputAdornment position="end">

@@ -5,8 +5,19 @@ import { FormControl, MenuItem, Select } from '@mui/material';
 const LANGS = [
     { code: 'en', full: 'English' },
     { code: 'hi', full: 'हिन्दी' },
+    { code: 'bn', full: 'বাংলা' },
+    { code: 'mr', full: 'मराठी' },
+    { code: 'te', full: 'తెలుగు' },
     { code: 'ta', full: 'தமிழ்' },
+    { code: 'gu', full: 'ગુજરાતી' },
+    { code: 'kn', full: 'ಕನ್ನಡ' },
+    { code: 'ml', full: 'മലയാളം' },
+    { code: 'or', full: 'ଓଡ଼ିଆ' },
+    { code: 'pa', full: 'ਪੰਜਾਬੀ' },
+    { code: 'as', full: 'অসমীয়া' },
+    { code: 'ur', full: 'اردو' },
 ];
+
 
 /**
  * theme='light'  → white pill with green text (auth pages / light backgrounds)
@@ -52,8 +63,8 @@ const LanguageSwitcher = ({ theme = 'dark' }) => {
                         '& .MuiSvgIcon-root': { color: '#2E7D32' },
                     } : {
                         color: 'white',
-                        '& .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255,255,255,0.45)', borderRadius: '20px' },
-                        '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: 'white' },
+                        '& .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255,255,255,0.3)', borderRadius: '20px' },
+                        '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255,255,255,0.7)' },
                         '& .MuiSvgIcon-root': { color: 'white' },
                     }),
                 }}

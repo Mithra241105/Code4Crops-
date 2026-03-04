@@ -18,6 +18,12 @@ const mandiSchema = new mongoose.Schema({
         of: Number,
         default: {},
     },
+    // Historical prices for each crop: { wheat: [2500, 2600, 2700], ... }
+    priceHistory: {
+        type: Map,
+        of: [Number],
+        default: {},
+    },
     // Supported crops
     supportedCrops: [String],
     // Handling charge per quintal (₹)
@@ -30,6 +36,7 @@ const mandiSchema = new mongoose.Schema({
     demandScore: { type: Number, default: 50 }, // 0-100
     avgDailyVolume: Number, // quintals
     phone: String,
+    verified: { type: Boolean, default: false },
     description: String,
 }, { timestamps: true });
 

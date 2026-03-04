@@ -24,11 +24,11 @@ const LoginPage = () => {
             const user = await login(form.email, form.password);
             navigate(user.role === 'farmer' ? '/farmer' : '/mandi', { replace: true });
         } catch (err) {
-            let msg = 'Login failed';
+            let msg = t('auth.loginFailed');
             if (!err.response) {
-                msg = 'Server unreachable. Please check your backend connection.';
+                msg = t('common.networkError');
             } else {
-                msg = err.response.data?.error || 'Login failed';
+                msg = err.response.data?.error || t('auth.loginFailed');
             }
             if (err.response?.data?.needsVerification) {
                 navigate('/auth/verify-otp', { state: { email: form.email } });
@@ -39,7 +39,7 @@ const LoginPage = () => {
     };
 
     return (
-        <AuthLayout title={t('auth.welcomeBack')} subtitle="Sign in to your Krishi-Route account">
+        <AuthLayout title={t('auth.welcomeBack')} subtitle={t('auth.loginSubtitle')}>
             {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
             <Box component="form" onSubmit={handleSubmit} display="flex" flexDirection="column" gap={2.5}>
                 <TextField

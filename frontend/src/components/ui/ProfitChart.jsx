@@ -6,10 +6,17 @@ import { useTranslation } from 'react-i18next';
 const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
         return (
-            <Box sx={{ bgcolor: 'white', border: '1px solid #E0E0E0', borderRadius: 2, p: 1.5, boxShadow: '0 4px 16px rgba(0,0,0,0.1)' }}>
-                <Typography variant="body2" fontWeight={700} mb={0.5}>{label}</Typography>
+            <Box sx={{
+                bgcolor: 'background.paper',
+                border: '1px solid',
+                borderColor: 'divider',
+                borderRadius: 2,
+                p: 1.5,
+                boxShadow: 4
+            }}>
+                <Typography variant="body2" fontWeight={700} mb={0.5} color="text.primary">{label}</Typography>
                 {payload.map((p, i) => (
-                    <Typography key={i} variant="caption" display="block" color={p.color}>
+                    <Typography key={i} variant="caption" display="block" sx={{ color: p.color, fontWeight: 600 }}>
                         {p.name}: ₹{Number(p.value).toLocaleString('en-IN')}
                     </Typography>
                 ))}
@@ -32,17 +39,17 @@ const ProfitChart = ({ results = [] }) => {
 
     return (
         <Box>
-            <Typography variant="h6" fontWeight={700} mb={2}>Profit Comparison</Typography>
+            <Typography variant="h6" fontWeight={700} mb={2}>{t('smart.profitComparison')}</Typography>
             <ResponsiveContainer width="100%" height={240}>
                 <BarChart data={data} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#F0F0F0" />
+                    <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.1} />
                     <XAxis dataKey="name" tick={{ fontSize: 12 }} />
                     <YAxis tick={{ fontSize: 11 }} tickFormatter={v => `₹${(v / 1000).toFixed(0)}k`} />
                     <Tooltip content={<CustomTooltip />} />
                     <Legend wrapperStyle={{ fontSize: '0.75rem' }} />
-                    <Bar dataKey={t('farmer.netProfit')} fill="#2E7D32" radius={[4, 4, 0, 0]} />
-                    <Bar dataKey={t('farmer.transportCost')} fill="#EF9A9A" radius={[4, 4, 0, 0]} />
-                    <Bar dataKey={t('farmer.handlingCost')} fill="#FFCC80" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey={t('farmer.netProfit')} fill="#4ADE80" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey={t('farmer.transportCost')} fill="#F87171" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey={t('farmer.handlingCost')} fill="#FBBF24" radius={[4, 4, 0, 0]} />
                 </BarChart>
             </ResponsiveContainer>
         </Box>

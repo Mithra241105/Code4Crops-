@@ -18,15 +18,15 @@ const ForgotPasswordPage = () => {
         setLoading(true);
         try {
             await forgotPassword(email);
-            setMessage('If this email is registered, an OTP has been sent.');
+            setMessage(t('auth.forgotPasswordSent'));
             setTimeout(() => navigate('/auth/reset-password', { state: { email } }), 2000);
         } catch (err) {
-            setMessage('If this email is registered, an OTP has been sent.');
+            setMessage(t('auth.forgotPasswordSent'));
         } finally { setLoading(false); }
     };
 
     return (
-        <AuthLayout title={t('auth.forgotPassword')} subtitle="Enter your email to receive a password reset OTP">
+        <AuthLayout title={t('auth.forgotPassword')} subtitle={t('auth.forgotPasswordSubtitle')}>
             {message && <Alert severity="info" sx={{ mb: 2 }}>{message}</Alert>}
             <Box component="form" onSubmit={handleSubmit} display="flex" flexDirection="column" gap={2.5}>
                 <TextField label={t('auth.email')} type="email" value={email} onChange={e => setEmail(e.target.value)} required fullWidth autoFocus />

@@ -40,13 +40,13 @@ const OtpVerifyPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const code = otp.join('');
-        if (code.length !== 6) return setError('Please enter all 6 digits');
+        if (code.length !== 6) return setError(t('auth.otpRequired'));
         setLoading(true); setError('');
         try {
             const user = await verifyOtp(email, code);
             navigate(user.role === 'farmer' ? '/farmer' : '/mandi', { replace: true });
         } catch (err) {
-            setError(err.response?.data?.error || 'Invalid OTP');
+            setError(err.response?.data?.error || t('auth.otpInvalid'));
         } finally { setLoading(false); }
     };
 
@@ -54,12 +54,12 @@ const OtpVerifyPage = () => {
         setResending(true); setError(''); setSuccess('');
         try {
             await resendOtp(email);
-            setSuccess('OTP resent successfully!');
+            setSuccess(t('auth.otpResent'));
             setCountdown(60);
             setOtp(Array(6).fill(''));
             inputRefs.current[0]?.focus();
         } catch (err) {
-            setError(err.response?.data?.error || 'Failed to resend OTP');
+            setError(err.response?.data?.error || t('auth.otpResendFailed'));
         } finally { setResending(false); }
     };
 
