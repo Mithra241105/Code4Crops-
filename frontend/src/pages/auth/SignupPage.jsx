@@ -23,9 +23,13 @@ const SignupPage = () => {
         if (form.password.length < 8) return setError(t('auth.passwordTooShort'));
         setLoading(true); setError('');
         try {
-            await signup(form.name, form.email, form.password, form.role);
+            const res = await signup(form.name, form.email, form.password, form.role);
             navigate('/auth/verify-otp', { state: { email: form.email, role: form.role } });
         } catch (err) {
+            if (err.response?.data?.needsVerification) {
+                navigate('/auth/verify-otp', { state: { email: form.email, role: form.role } });
+                return;
+            }
             setError(err.response?.data?.error || t('auth.signupFailed'));
         } finally { setLoading(false); }
     };

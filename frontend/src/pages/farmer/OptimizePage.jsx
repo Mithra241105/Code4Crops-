@@ -11,6 +11,7 @@ import MandiCard from '../../components/ui/MandiCard';
 import ProfitChart from '../../components/ui/ProfitChart';
 import MapView from '../../components/Map/MapView';
 import DemandRadar from '../../components/ui/DemandRadar';
+import TransportPool from '../../components/ui/TransportPool';
 
 const CROPS = ['wheat', 'rice', 'maize', 'onion', 'potato', 'tomato', 'cotton', 'soybean', 'mustard', 'groundnut', 'garlic', 'chilli', 'banana', 'orange', 'millet', 'ragi', 'grapes', 'bajra', 'brinjal', 'jute', 'coconut'];
 const VEHICLES = [
@@ -41,6 +42,7 @@ const OptimizePage = () => {
     const [showMap, setShowMap] = useState(false);
     const [mapOpen, setMapOpen] = useState(false);
     const [peakDay, setPeakDay] = useState(null);
+    const [joining, setJoining] = useState(false);
 
     const handleChange = (e) => {
         setForm(f => ({ ...f, [e.target.name]: e.target.value }));
@@ -383,6 +385,33 @@ const OptimizePage = () => {
                             {t('smart.allMandis')}
                         </Typography>
                     </Box>
+
+                    {/* TransportPool — shown for best mandi if it has real pooling matches */}
+                    {results[0]?.hasPoolingOption && (
+                        <TransportPool
+                            mandi={results[0]}
+                            joining={joining}
+                            onJoinPool={async () => {
+                                setJoining(true);
+                                try {
+                                    await api.post('/farmer/travel-plan', {
+                                        crop: form.cropType,
+                                        quantity: unit === 'kg' ? Number(form.quantity) / 100 : Number(form.quantity),
+                                        mandiId: results[0].mandiId,
+                                        vehicleType: form.vehicleType,
+                                        travelDate: form.travelDate,
+                                        location: { lat: form.farmerLat, lng: form.farmerLng, name: form.locationName }
+                                    });
+                                    navigate('/farmer/trips');
+                                } catch (err) {
+                                    console.error('Pool join error:', err);
+                                    setError(err.response?.data?.error || t('common.error'));
+                                } finally {
+                                    setJoining(false);
+                                }
+                            }}
+                        />
+                    )}
 
                     {/* Mandi Cards */}
                     {results.map((mandi, i) => (

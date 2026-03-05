@@ -16,14 +16,27 @@ router.post('/signup', async (req, res) => {
         if (password.length < 8) return res.status(400).json({ error: 'Password must be at least 8 characters' });
 
         const existing = await User.findOne({ email: email.toLowerCase() });
-        if (existing) return res.status(409).json({ error: 'Email already registered' });
+        if (existing) {
+            if (!existing.isVerified) {
+                // Resend OTP and allow them to proceed to verification
+                const otp = existing.generateOTP();
+                await existing.save();
+                await sendOTPEmail(existing.email, otp, 'verification');
+                return res.status(200).json({
+                    message: 'Email already registered but not verified. A new OTP has been sent.',
+                    email: existing.email,
+                    needsVerification: true
+                });
+            }
+            return res.status(409).json({ error: 'Email already registered' });
+        }
 
         const user = new User({ name, email: email.toLowerCase(), role });
         await user.setPassword(password);
         const otp = user.generateOTP();
         await user.save();
 
-        await sendOTPEmail(email, otp, 'verification');
+        await sendOTPEmail(user.email, otp, 'verification');
         res.status(201).json({ message: 'Account created. Please verify your email.', email: user.email });
     } catch (err) {
         console.error('/signup error:', err);
@@ -48,6 +61,7 @@ router.post('/verify-otp', async (req, res) => {
         const token = jwt.sign({ userId: user._id, role: user.role }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
         res.json({ message: 'Email verified successfully', token, user: { id: user._id, name: user.name, email: user.email, role: user.role } });
     } catch (err) {
+        console.error('/verify-otp error:', err);
         res.status(500).json({ error: 'Server error' });
     }
 });
@@ -65,6 +79,7 @@ router.post('/resend-otp', async (req, res) => {
         await sendOTPEmail(email, otp, 'verification');
         res.json({ message: 'OTP resent to your email' });
     } catch (err) {
+        console.error('/resend-otp error:', err);
         res.status(500).json({ error: 'Server error' });
     }
 });
@@ -78,7 +93,16 @@ router.post('/login', async (req, res) => {
         const user = await User.findOne({ email: email.toLowerCase() });
         if (!user) return res.status(401).json({ error: 'Invalid credentials' });
         if (!(await user.checkPassword(password))) return res.status(401).json({ error: 'Invalid credentials' });
-        if (!user.isVerified) return res.status(403).json({ error: 'Please verify your email first', needsVerification: true, email: user.email });
+        if (!user.isVerified) {
+            const otp = user.generateOTP();
+            await user.save();
+            await sendOTPEmail(user.email, otp, 'verification');
+            return res.status(403).json({
+                error: 'Please verify your email first. A new OTP has been sent.',
+                needsVerification: true,
+                email: user.email
+            });
+        }
 
         const token = jwt.sign({ userId: user._id, role: user.role }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
         user.langPref && null; // keep langPref
@@ -102,6 +126,7 @@ router.post('/forgot-password', async (req, res) => {
         await sendOTPEmail(email, otp, 'reset');
         res.json({ message: 'If the email exists, an OTP has been sent.' });
     } catch (err) {
+        console.error('/forgot-password error:', err);
         res.status(500).json({ error: 'Server error' });
     }
 });
@@ -123,6 +148,7 @@ router.post('/reset-password', async (req, res) => {
         await user.save();
         res.json({ message: 'Password reset successfully' });
     } catch (err) {
+        console.error('/reset-password error:', err);
         res.status(500).json({ error: 'Server error' });
     }
 });

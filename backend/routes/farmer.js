@@ -51,24 +51,42 @@ router.post('/optimize', async (req, res) => {
 
         // ── Pooling Logic ──────────────────────────────────────────
         let poolingMatches = [];
+        let poolingPartnersMap = {}; // keyed by mandiId string
         if (travelDate) {
             const capacity = VEHICLE_CAPACITY[vehicleType] || 30;
-            // Find plans same date + same vehicle + same mandi
-            // Simple rule: if existing quantity + current quantity <= capacity
+            // Find all plans for same date + same vehicle type (crop-agnostic)
             const existingPlans = await TravelPlan.find({
                 travelDate,
                 vehicleType,
                 status: 'planned',
                 farmerId: { $ne: req.user._id }
-            });
+            })
+                .populate('farmerId', 'name farmerProfile')
+                .populate('mandiId', 'name');
 
             console.log(`[Pooling] Found ${existingPlans.length} potential plans for date ${travelDate}, vehicle ${vehicleType}`);
-            // Filter plans where (existing.quantity + current.quantity) <= capacity
+
+            // Filter plans where combined quantity fits in vehicle
             poolingMatches = existingPlans.filter(p => {
                 const fits = (p.quantity + Number(quantity)) <= capacity;
-                if (!fits) console.log(`[Pooling] Capacity exceeded: ${p.quantity} + ${quantity} > ${capacity}`);
-                return fits;
+                return fits && p.mandiId; // only valid plans with a populated mandi
             });
+
+            // Build a map of mandiId -> array of partner info for later use in the response
+            poolingMatches.forEach(p => {
+                const key = p.mandiId._id.toString();
+                if (!poolingPartnersMap[key]) poolingPartnersMap[key] = [];
+                poolingPartnersMap[key].push({
+                    name: p.farmerId?.name || 'Unknown Farmer',
+                    phone: p.farmerId?.farmerProfile?.phone || 'N/A',
+                    quantity: p.quantity,
+                    crop: p.crop,
+                    vehicleType: p.vehicleType,
+                    from: p.location?.name || 'Unknown',
+                    to: p.mandiId?.name || 'Mandi'
+                });
+            });
+
             console.log(`[Pooling] ${poolingMatches.length} plans fit in vehicle capacity ${capacity}`);
         }
 
@@ -79,6 +97,12 @@ router.post('/optimize', async (req, res) => {
         }, mandis);
 
         if (results.length === 0) return res.status(404).json({ error: `No mandis found offering ${cropType}` });
+
+        // Attach real partner details to each result
+        const resultsWithPartners = results.map(r => ({
+            ...r,
+            poolingPartners: poolingPartnersMap[r.mandiId?.toString()] || []
+        }));
 
         // Save to history
         await OptimizationHistory.create({
@@ -92,7 +116,7 @@ router.post('/optimize', async (req, res) => {
             fuelPriceUsed: results[0].fuelPrice,
         });
 
-        res.json({ results, count: results.length, bestMandi: results[0] });
+        res.json({ results: resultsWithPartners, count: resultsWithPartners.length, bestMandi: resultsWithPartners[0] });
     } catch (err) {
         console.error('/optimize error:', err);
         res.status(500).json({ error: 'Server error' });

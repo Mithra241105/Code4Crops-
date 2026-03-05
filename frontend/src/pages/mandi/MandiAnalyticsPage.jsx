@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {
     Container, Box, Typography, Card, CardContent, CircularProgress, Alert,
-    LinearProgress, Chip, Divider, Button, Avatar
+    LinearProgress, Chip, Divider, Button, Avatar, useTheme
 } from '@mui/material';
 import {
     BarChart, Bar, XAxis, YAxis, Tooltip as RTooltip, ResponsiveContainer,
@@ -22,7 +22,7 @@ const CROP_EMOJI = {
     grapes: '🍇', bajra: '🌾', brinjal: '🍆', jute: '🎍', coconut: '🥥', castor: '🪴', guar: '🌿'
 };
 
-const PIE_COLORS = ['#1B5E20', '#388E3C', '#4CAF50', '#81C784', '#A5D6A7'];
+const PIE_COLORS = ['#1B5E20', '#2E7D32', '#388E3C', '#43A047', '#D4E157'];
 
 const TrendArrow = ({ direction }) => {
     if (direction === 'up') return <TrendingUp fontSize="small" sx={{ color: '#2E7D32' }} />;
@@ -67,6 +67,7 @@ const ChartTooltip = ({ active, payload, label }) => {
 const MandiAnalyticsPage = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
+    const theme = useTheme();
     const [analytics, setAnalytics] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -371,14 +372,33 @@ const MandiAnalyticsPage = () => {
                             <CardContent sx={{ p: 3 }}>
                                 <Typography variant="h6" fontWeight={800} mb={2}>{t('analytics.priceShareDist')}</Typography>
                                 {pieData.length > 0 ? (
-                                    <ResponsiveContainer width="100%" height={220}>
-                                        <PieChart>
-                                            <Pie data={pieData} cx="50%" cy="50%" outerRadius={85}
-                                                dataKey="value" nameKey="name" labelLine={false}
-                                                label={({ percent }) => `${(percent * 100).toFixed(0)}%`}>
+                                    <ResponsiveContainer width="100%" height={320}>
+                                        <PieChart margin={{ top: 20, bottom: 20 }}>
+                                            <Pie data={pieData} cx="50%" cy="50%" outerRadius={95}
+                                                dataKey="value" nameKey="name" labelLine={true}
+                                                label={({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }) => {
+                                                    const RADIAN = Math.PI / 180;
+                                                    const radius = outerRadius + 22;
+                                                    const x = cx + radius * Math.cos(-midAngle * RADIAN);
+                                                    const y = cy + radius * Math.sin(-midAngle * RADIAN);
+                                                    return (
+                                                        <text x={x} y={y} fill={theme.palette.text.primary}
+                                                            textAnchor={x > cx ? 'start' : 'end'}
+                                                            dominantBaseline="central" fontSize={12} fontWeight={700}>
+                                                            {`${(percent * 100).toFixed(0)}%`}
+                                                        </text>
+                                                    );
+                                                }}>
                                                 {pieData.map((_, i) => <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />)}
                                             </Pie>
-                                            <Legend formatter={v => <span style={{ fontSize: 11 }}>{v}</span>} />
+                                            <Legend
+                                                verticalAlign="bottom"
+                                                align="center"
+                                                iconType="circle"
+                                                iconSize={10}
+                                                formatter={v => <span style={{ fontSize: 13, color: theme.palette.text.primary, fontWeight: 600, marginLeft: 4 }}>{v}</span>}
+                                                wrapperStyle={{ paddingTop: '20px' }}
+                                            />
                                         </PieChart>
                                     </ResponsiveContainer>
                                 ) : (

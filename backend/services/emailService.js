@@ -5,15 +5,26 @@ const createTransporter = () => {
     // Dev mode: console transport
     return null;
   }
-  return nodemailer.createTransport({
+
+  const config = {
     host: process.env.SMTP_HOST,
     port: parseInt(process.env.SMTP_PORT) || 587,
-    secure: false,
+    secure: false, // upgrades to STARTTLS
     auth: {
       user: process.env.SMTP_USER,
       pass: process.env.SMTP_PASS,
     },
-  });
+  };
+
+  // Special handling for Gmail to increase reliability
+  if (process.env.SMTP_HOST.includes('gmail.com')) {
+    config.service = 'gmail';
+    delete config.host;
+    delete config.port;
+    delete config.secure;
+  }
+
+  return nodemailer.createTransport(config);
 };
 
 const sendOTPEmail = async (email, otp, purpose = 'verification') => {
