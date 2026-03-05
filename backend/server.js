@@ -8,12 +8,21 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: [
-    "https://code4-crops.vercel.app",
-    "https://code4-crops-l4li6.vercel.app",
-    "http://localhost:5173",
-    process.env.CLIENT_URL
-  ].filter(Boolean),
+  origin: (origin, callback) => {
+    const allowedOrigins = [
+      "https://code4-crops.vercel.app",
+      "https://code4-crops-l4li6.vercel.app",
+      "http://localhost:5173",
+      process.env.CLIENT_URL
+    ].filter(Boolean);
+
+    // Allow requests with no origin (like mobile apps or curl) or allowed origins
+    if (!origin || allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true
 }));
 app.use(express.json({ limit: '10mb' }));

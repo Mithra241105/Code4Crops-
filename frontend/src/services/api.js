@@ -1,6 +1,12 @@
 import axios from 'axios';
 
-let API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+let API_URL = import.meta.env.VITE_API_URL;
+
+if (!API_URL) {
+    console.warn("⚠️ VITE_API_URL is not set! Defaulting to localhost:5000. Check your Vercel settings.");
+    API_URL = 'http://localhost:5000';
+}
+
 // Clean up any trailing slashes or /api provided by the user in the ENV
 if (API_URL.endsWith('/api')) API_URL = API_URL.replace(/\/api$/, '');
 if (API_URL.endsWith('/')) API_URL = API_URL.replace(/\/$/, '');
