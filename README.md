@@ -23,24 +23,25 @@ In many agricultural sectors, farmers often lose significant profit due to opaqu
 
 ## 🚀 Access & Test Credentials
 
-Explore the platform without signing up using these default test accounts. All accounts use the same password.
+> [!WARNING]
+> **TEMPORARY MAIL ISSUE**: We are currently experiencing a technical issue with our SMTP relay (Brevo/SendGrid). As a result, **OTP emails and password reset links are not being delivered**. 
+> 
+> Please use the following pre-verified test credentials to explore the platform. Do not attempt to sign up with new accounts as you will not receive the verification code.
 
 **Password for all:** `123456`
 
 ### 👨‍🌾 Farmer Accounts
 *Visualize the "Optimize" dashboard and match with Mandis.*
-- `farmer1@krishiroute.com` to `farmer10@krishiroute.com`
+- `farmer1@krishiroute.com`
+- `farmer2@krishiroute.com`
+- *(Available up to `farmer10@krishiroute.com`)*
 
 ### 🏪 Mandi Operator Accounts (By Region)
 *Manage crop prices and view analytics for specific states.*
-- **Tamil Nadu**: `mandi_tn1@krishiroute.com` to `mandi_tn5@krishiroute.com`
-- **Kerala**: `mandi_kl1@krishiroute.com` to `mandi_kl5@krishiroute.com`
-- **Andhra Pradesh**: `mandi_ap1@krishiroute.com` to `mandi_ap5@krishiroute.com`
-- **Karnataka**: `mandi_ka1@krishiroute.com` to `mandi_ka5@krishiroute.com`
-- **Maharashtra**: `mandi_mh1@krishiroute.com` to `mandi_mh5@krishiroute.com`
-- **Punjab**: `mandi_pb1@krishiroute.com` to `mandi_pb5@krishiroute.com`
-
-*(Format: `mandi_[state_code][1-5]@krishiroute.com` — Works for all 28 states!)*
+- **Tamil Nadu**: `mandi_tn1@krishiroute.com`
+- **Punjab**: `mandi_pb1@krishiroute.com`
+- **Maharashtra**: `mandi_mh1@krishiroute.com`
+- *(Works for all 28 states! Format: `mandi_[state_code]1@krishiroute.com`)*
 
 ---
 
