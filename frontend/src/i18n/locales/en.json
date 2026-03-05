@@ -376,6 +376,7 @@
         "capacityWarning": "⚠️ Quantity exceeds {{vehicle}} capacity.",
         "suggestVehicle": "Suggest using {{vehicle}} instead.",
         "priceDropping": "⚠ Prices dropping 3 days. Consider selling early.",
+        "priceDropDays": "⚠ Prices dropping {{days}} days. Consider selling early.",
         "profitMarginLabel": "Profit Margin",
         "transportBreakdownTitle": "🚚 TRANSPORT BREAKDOWN",
         "fuelCost": "Fuel Cost",

@@ -40,6 +40,30 @@ const CropAxisTick = ({ x, y, payload }) => (
     </g>
 );
 
+const ChartTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+        return (
+            <Box sx={{
+                bgcolor: 'background.paper',
+                border: '1px solid',
+                borderColor: 'divider',
+                borderRadius: 2,
+                p: 1.5,
+                boxShadow: 4,
+                zIndex: 10
+            }}>
+                <Typography variant="body2" fontWeight={700} color="text.primary">{label}</Typography>
+                {payload.map((p, i) => (
+                    <Typography key={i} variant="caption" display="block" sx={{ color: p.color || 'primary.main', fontWeight: 600 }}>
+                        {p.name === 'price' ? 'Price' : p.name}: ₹{p.value.toLocaleString('en-IN')}
+                    </Typography>
+                ))}
+            </Box>
+        );
+    }
+    return null;
+};
+
 const MandiAnalyticsPage = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
@@ -385,11 +409,8 @@ const MandiAnalyticsPage = () => {
                                         <CartesianGrid strokeDasharray="3 3" stroke="rgba(128,128,128,0.1)" />
                                         <XAxis dataKey="crop" tick={<CropAxisTick />} interval={0} height={70} />
                                         <YAxis tick={{ fontSize: 11 }} tickFormatter={v => `₹${(v / 1000).toFixed(1)}k`} width={55} />
-                                        <RTooltip
-                                            formatter={(v, name, { payload }) => [`₹${v.toLocaleString('en-IN')} / qtl`, payload.crop]}
-                                            contentStyle={{ borderRadius: 8, fontSize: 12 }}
-                                        />
-                                        <Bar dataKey="price" radius={[5, 5, 0, 0]} fill="url(#greenGradBar)" />
+                                        <RTooltip content={<ChartTooltip />} />
+                                        <Bar dataKey="price" radius={[5, 5, 0, 0]} fill="url(#greenGradBar)" label={{ position: 'top', fill: 'currentColor', fontSize: 10, offset: 10, formatter: v => `₹${(v / 1000).toFixed(1)}k` }} />
                                         <defs>
                                             <linearGradient id="greenGradBar" x1="0" y1="0" x2="0" y2="1">
                                                 <stop offset="0%" stopColor="#2E7D32" />
