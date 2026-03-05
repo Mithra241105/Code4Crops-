@@ -6,6 +6,9 @@ require('dotenv').config();
 
 const app = express();
 
+// Trust proxy for Render/Vercel (required for rate-limit)
+app.set('trust proxy', 1);
+
 // Middleware
 app.use(cors({
   origin: (origin, callback) => {
