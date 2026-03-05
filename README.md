@@ -1,5 +1,5 @@
 # Krishi-Route 🌾
-### *Smart Agricultural Logistics & Profit Optimization*
+### *Revolutionizing Agricultural Logistics through Smart Optimization*
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![React](https://img.shields.io/badge/Frontend-React%20%2B%20Vite-blue)](https://reactjs.org/)
@@ -7,151 +7,137 @@
 [![MongoDB](https://img.shields.io/badge/Database-MongoDB-green)](https://www.mongodb.com/)
 [![MUI](https://img.shields.io/badge/UI-Material%20UI%20v5-blueviolet)](https://mui.com/)
 
-**Krishi-Route** is a premium, state-of-the-art web application designed to empower farmers by optimizing their crop sales. It combines real-time market data, interactive geospatial mapping, and advanced logistics algorithms to find the most profitable Mandis (markets) for their produce.
+**Krishi-Route** is a premium, data-driven platform designed to eliminate the middleman and maximize farmer profits. By integrating real-time market data, geospatial analysis, and transport pooling, we empower rural communities to make smarter, more profitable decisions.
 
-🔗 **[Live Demo](https://code4-crops.vercel.app/)** | 📺 **[Project Overview Video](https://drive.google.com/drive/folders/1EmfPVGZyaL5DB-3kiu4QlOdJdbFpa2kX?usp=sharing)**
-
----
-
-## 🌟 Project Overview
-In many agricultural sectors, farmers often lose significant profit due to opaque pricing and high transport costs. **Krishi-Route** solves this by:
-1.  **Analyzing live prices** across multiple Mandis.
-2.  **Calculating real-time transport costs** based on distance and fuel prices.
-3.  **Providing actionable insights** using historical trends and machine learning patterns.
+🔗 **[Live Demo Hosted on Vercel](https://code4-crops.vercel.app/)**
+📺 **[Watch our Project Showcase](https://drive.google.com/drive/folders/1EmfPVGZyaL5DB-3kiu4QlOdJdbFpa2kX?usp=sharing)**
 
 ---
 
-## 🚀 Access & Test Credentials
+## 🔥 App Features (Module Breakdown)
 
-> [!WARNING]
-> **TEMPORARY MAIL ISSUE**: We are currently experiencing a technical issue with our SMTP relay (Brevo/SendGrid). As a result, **OTP emails and password reset links are not being delivered**. 
-> 
-> Please use the following pre-verified test credentials to explore the platform. Do not attempt to sign up with new accounts as you will not receive the verification code.
+### 1. 💰 Profit Maximization Engine
+- **Dynamic Calculation**: Net Profit = (Market Price × Yield) - (Distance × Fuel Cost) - Handling Fees.
+- **Optimal Mandi Selection**: Scans all regional Mandis to find the highest return-on-investment.
+- **Yield Forecasting**: Basic logic to estimate total earnings based on crop variety.
 
-**Password for all:** `123456`
+### 2. 🚚 Rural Transport Pooling ("Uber for Crops")
+- **Social Logistics**: Find other farmers heading to the same market on the same day.
+- **Cost Sharing**: Automatically calculates shared transport overhead to reduce individual expenses by up to 40%.
+- **Matchmaking**: View contact details and capacity of potential pooling partners.
 
-### 👨‍🌾 Farmer Accounts
-*Visualize the "Optimize" dashboard and match with Mandis.*
-- `farmer1@krishiroute.com`
-- `farmer2@krishiroute.com`
-- *(Available up to `farmer10@krishiroute.com`)*
+### 3. 🗺️ Geospatial Intelligence
+- **Interactive Mapping**: Powered by Leaflet.js with GPU-acceleration.
+- **Distance Estimation**: Real-time distance calculations from farmer location to Mandi.
+- **Visual Routes**: See exactly where your crops are going.
 
-### 🏪 Mandi Operator Accounts (By Region)
-*Manage crop prices and view analytics for specific states.*
-- **Tamil Nadu**: `mandi_tn1@krishiroute.com`
-- **Punjab**: `mandi_pb1@krishiroute.com`
-- **Maharashtra**: `mandi_mh1@krishiroute.com`
-- *(Works for all 28 states! Format: `mandi_[state_code]1@krishiroute.com`)*
+### 4. 📈 Smart Analytics Dashboard
+- **Price Trends**: Historical data analysis to identify "Best Day to Sell".
+- **Market Pressure**: Real-time arrival monitoring to avoid "Price Drops" due to oversupply.
+- **Demand Radar**: Visualizing which crops are most wanted in specific regions.
 
----
-
-## 🎨 Professional UI & UX Design
-The application is built with a **Premium Focus**, ensuring a "wow" factor for every user.
-
-### State-of-the-Art Aesthetics
-- **Material UI (MUI) v5**: Full utilization of MUI's design tokens for a sleek, modern, and accessible interface.
-- **Glassmorphism & Depth**: Subtle shadows, semi-transparent layers, and blurred backgrounds create a high-end feel.
-- **Micro-Animations**: Smooth transitions and hover effects (using CSS and Framer-inspired logic) keep the interface feeling alive.
-- **No Placeholders**: Every image and icon is carefully curated using dynamic icons from `@mui/icons-material`.
-
-### Hardware & GPU Optimization
-- **GPU-Accelerated Maps**: Interactive maps (built with **Leaflet**) utilize hardware acceleration for ultra-smooth panning and zooming.
-- **Performant Charting**: **Chart.js** and **Recharts** are optimized to render complex profit and demand data without taxing the CPU.
-
-### Comprehensive Themes
-- **Dynamic Theming**: Features a built-in `ThemeContext` allowing users to switch between **Dark Mode** and **Light Mode** instantly.
-- **Adaptive UI**: The entire layout recalibrates its color palette and contrast based on the selected theme.
+### 5. 🌍 Universal Accessibility (13+ Languages)
+- **Deep Localization**: English, Hindi, Tamil, Telugu, Malayalam, Kannada, Marathi, Gujarati, Bengali, Urdu, Odia, Assamese, Punjabi.
+- **RTL Support**: Full support for Urdu and other Right-to-Left scripts.
 
 ---
 
-## 🌍 Multilingual Support (13 Languages)
-To bridge the gap for regional farmers, **Krishi-Route** supports **13 different languages** using `react-i18next`.
+## �️ Detailed Architecture
 
-| Supported Languages | | | |
-|---|---|---|---|
-| English | हिन्दी (Hindi) | தமிழ் (Tamil) | తెలుగు (Telugu) |
-| বাংলা (Bengali) | മലയാളം (Malayalam) | ಕನ್ನಡ (Kannada) | ગુજરાતી (Gujarati) |
-| मराठी (Marathi) | اردو (Urdu) | ਪੰਜਾਬੀ (Punjabi) | ଓଡ଼ିଆ (Odia) |
-| অসমীয়া (Assamese) | | | |
+The system follows a classic **MERN (MongoDB, Express, React, Node)** stack with a focus on modularity and high-performance UI.
 
-*The application handles Right-to-Left (RTL) for Urdu as well.*
-
----
-
-## 🧠 How It Works (The Brain)
-The "Brain" of the project is the **Optimization Engine**, a multi-layered logic system.
-
-### 1. The Profit Maximization Formula
-The system recommends Mandis based on a weighted **Net Profit** calculation:
-> **Net Profit** = (Current Price × Yield) - (Distance × Fuel Cost/KM) - Handling Fees
-
-### 2. Historical Insights & AI Patterns
-- **Average Tuesday Price**: A trend-based analysis to suggest the optimal day to sell.
-- **Arrival Pressure**: Monitors Mandi inventory levels to predict imminent price drops.
-- **Volatility Scores**: Helps farmers avoid markets with unstable price fluctuations.
-
-### 3. Rural Transport Pooling
-A unique feature that allows farmers to share transport costs. The system automatically finds other farmers heading to the same Mandi on the same date, drastically reducing overhead and increasing net profit.
+```mermaid
+graph TD
+    User((Farmer / Admin)) -->|React Router| Frontend[Frontend - React + Vite]
+    Frontend -->|MUI v5| UI[Premium UI/UX Components]
+    Frontend -->|Auth Context| JWT[JWT Authentication]
+    
+    Frontend -->|HTTP / Axios| API[Backend - Express.js]
+    API -->|Auth Middleware| Secure[Secure Routes]
+    
+    Secure -->|Business Logic| Brain[Optimization Engine]
+    Brain -->|Calculate Profit| Formula[Profit Formula]
+    Brain -->|Geospatial| Mapping[Distance API]
+    
+    API -->|Mongoose| DB[(MongoDB)]
+    DB -->|Indexes| Geo[Geospatial Data]
+    DB -->|Schemas| Models[User/Mandi/Trip Models]
+```
 
 ---
 
-## 💾 Permanent Seed Data System
-Unlike traditional apps that reset data on every restart, **Krishi-Route** features an **Intelligent Seeding Engine**.
+## 🛡️ Complete Test Account Directory
 
-- **One-Time Initialization**: Seed data is created only once on the first run.
-- **Permanence**: Data is stored permanently in MongoDB. The system detects existing records and skips the seeding process on subsequent startups.
-- **Regional Accuracy**: Seeded data includes realistic Mandis from Tamil Nadu, Kerala, and Andhra Pradesh, with localized farmer profiles.
+> [!IMPORTANT]
+> **SMTP NOTICE**: Due to a temporary issue with our mail relay (Brevo), OTP verification is bypassed/disabled in the hosted version for test IDs. **Please use the following pre-verified accounts:**
+
+### 👨‍🌾 Farmer Test Accounts (Password: `123456`)
+| Location | Email ID | Role |
+| :--- | :--- | :--- |
+| North Region | `farmer1@krishiroute.com` | Standard Farmer |
+| South Region | `farmer2@krishiroute.com` | Standard Farmer |
+| East Region | `farmer3@krishiroute.com` | Standard Farmer |
+| West Region | `farmer4@krishiroute.com` | Standard Farmer |
+| *Batch* | `farmer5@krishiroute.com` to `10` | Standard Farmers |
+
+### 🏪 Mandi Operator Accounts (Password: `123456`)
+| Region (State Code) | Email ID | Coverage |
+| :--- | :--- | :--- |
+| **TN** (Tamil Nadu) | `mandi_tn1@krishiroute.com` | Regional Market Admin |
+| **PB** (Punjab) | `mandi_pb1@krishiroute.com` | Regional Market Admin |
+| **MH** (Maharashtra) | `mandi_mh1@krishiroute.com` | Regional Market Admin |
+| **KL** (Kerala) | `mandi_kl1@krishiroute.com` | Regional Market Admin |
+| **AP** (Andhra Pradesh) | `mandi_ap1@krishiroute.com` | Regional Market Admin |
+| *Global* | `mandi_[state_code]1@...` | Works for all 28 states! |
 
 ---
 
-## 🛠️ Technology Stack
+## � Detailed Run Plan (Local Setup)
 
-### Frontend
-- **React (+ Vite)**: For ultra-fast development and optimized production bundles.
-- **Material UI**: The core design system for premium feel.
-- **React-Leaflet**: GPU-accelerated geospatial mapping.
-- **Chart.js / Recharts**: High-performance data visualization.
+### 1️⃣ Prepare Environment
+Clone the repository and ensure you have **Node.js (v18+)** and **MongoDB** installed.
 
-### Backend
-- **Node.js & Express**: A robust, non-blocking API layer.
-- **MongoDB (Mongoose)**: Scalable NoSQL database with optimized indexing.
-- **JWT & Bcrypt**: Enterprise-grade security for authentication.
-- **Nodemailer**: Secure OTP and transaction notifications.
+### 2️⃣ Configure Secrets
+You **MUST** create these files for the system to boot correctly.
 
----
+#### 📂 Backend (`backend/.env`)
+```env
+PORT=5000
+MONGODB_URI=mongodb://localhost:27017/krishiroute
+JWT_SECRET=hackathon_secret_2024
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=test@gmail.com
+SMTP_PASS=app_password_here
+```
 
-## 🚀 Getting Started
+#### 📂 Frontend (`frontend/.env`)
+```env
+VITE_API_URL=http://localhost:5000/api
+```
 
-### 1. Prerequisites
-- Node.js (v18+)
-- MongoDB (Running locally or on Atlas)
+### 3️⃣ Launch Procedure
 
-### 🚀 Unique Automated Launch (Recommended)
-Krishi-Route features a custom automated setup system that handles everything for you.
+#### 🖥️ Scenario A: Automated One-Click (Recommended)
+Our custom scripts handle dependency installation, data seeding, and server synchronization automatically.
+- **Windows**: Run `.\start.bat` as Administrator.
+- **Linux/bash**: Run `chmod +x start.bash && ./start.bash`.
 
-**For Linux/Mac/Git Bash:**
+#### �️ Scenario B: Manual Micro-Management
+**Terminal 1 (Backend):**
 ```bash
-chmod +x start.bash
-./start.bash
+cd backend
+npm install
+npm run dev
 ```
 
-**For Windows (Command Prompt):**
-```powershell
-.\start.bat
+**Terminal 2 (Frontend):**
+```bash
+cd frontend
+npm install
+npm run dev
 ```
-
-**What this does automatically:**
-1.  **Installs** all dependencies for both Backend and Frontend.
-2.  **Initializes** the Permanent Seed Data.
-3.  **Launches** both servers in parallel in a single terminal window.
 
 ---
 
-## 🛡️ Security Features
-- **OTP Verification**: Secure login via email and mobile.
-- **Route Guards**: Protected dashboards for Farmers and Mandi Admins.
-- **Environment Protection**: Sensitive keys are managed via `.env` files.
-
----
-
-*Made with ❤️ for the farming community.*
+*Built with ❤️ for a more profitable farming future.*
